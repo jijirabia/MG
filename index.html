@@ -68,7 +68,7 @@
 <h1>Event Listings</h1>
 <div class="wrapper" id="events"></div>
 <script>
-const EVENTS_JSON_URL = 'https://jijirabia.github.io/MG/events.json';
+const EVENTS_JSON_URL = 'https://jijirabia.github.io/MG/events.json?cache=' + new Date().getTime();
 
 // Optional: log event links in console
 async function testLinks() {
@@ -141,6 +141,7 @@ loadEvents();
 
 </body>
 </html>
+
 
 
 
