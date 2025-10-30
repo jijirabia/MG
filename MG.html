@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Event Listings</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #e0e0e0;
+    margin: 0;
+    padding: 10px;
+    line-height: 1.5;
+  }
+
+  h1 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .wrapper {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  details {
+    width: 100%;
+    margin: 10px 0;
+    background: #ffffff;
+    border-radius: 6px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  summary {
+    cursor: pointer;
+    font-size: 1.15em;
+    font-weight: bold;
+    padding: 10px;
+    display: block;
+    outline: none;
+  }
+
+  .content {
+    padding: 10px;
+    white-space: normal;
+  }
+
+  .content * {
+    font-family: Arial, sans-serif !important;
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+    margin: 0 0 10px 0; /* consistent spacing */
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 5px 0;
+  }
+</style>
+</head>
+<body>
+
+<h1>Event Listings</h1>
+<div class="wrapper" id="events"></div>
+<script>
+const EVENTS_JSON_URL = 'https://raw.githubusercontent.com/jijirabia/MG/main/events.json';
+
+// Optional: log event links in console
+async function testLinks() {
+  try {
+    const resp = await fetch(EVENTS_JSON_URL);
+    const events = await resp.json();
+    console.log("---- Event Links ----");
+    events.forEach((ev, i) => {
+      console.log(`${i+1}. Title: ${ev.Title || ev.title}`);
+      console.log("Original URL:", ev.URL || ev.url);
+      console.log("-------------------");
+    });
+  } catch (err) {
+    console.error("Error fetching JSON:", err.message);
+  }
+}
+
+// Load events and embed Google Docs in iframes
+async function loadEvents() {
+  const container = document.getElementById('events');
+
+  try {
+    const resp = await fetch(EVENTS_JSON_URL);
+    if (!resp.ok) throw new Error('Failed to fetch JSON');
+    const events = await resp.json();
+
+    events.forEach(ev => {
+      const details = document.createElement('details');
+      const summary = document.createElement('summary');
+      summary.textContent = ev.Title || ev.title;
+
+      const content = document.createElement('div');
+      content.className = 'content';
+
+      // Use published Google Doc URL directly
+      const iframe = document.createElement('iframe');
+      iframe.src = (ev.URL || ev.url) + '?embedded=true';
+      iframe.width = '100%';
+      iframe.height = '600';
+      iframe.style.border = '0';
+
+      content.appendChild(iframe);
+      details.appendChild(summary);
+      details.appendChild(content);
+      container.appendChild(details);
+
+      // Accordion behavior
+      details.addEventListener('toggle', () => {
+        if (details.open) {
+          document.querySelectorAll('details').forEach(d => {
+            if (d !== details) d.removeAttribute('open');
+          });
+        }
+      });
+    });
+
+  } catch (err) {
+    container.innerHTML = `<p><em>Error loading events: ${err.message}</em></p>`;
+  }
+}
+
+// Run the functions
+testLinks();
+loadEvents();
+</script>
+
+
+
+
+</body>
+</html>
