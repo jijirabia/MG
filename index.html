@@ -89,7 +89,7 @@ async function testLinks() {
 // Load events and embed Google Docs in iframes
 async function loadEvents() {
   const container = document.getElementById('events');
-
+  container.innerHTML = ''; // ✅ Clear old events
   try {
     const resp = await fetch(EVENTS_JSON_URL);
     if (!resp.ok) throw new Error('Failed to fetch JSON');
@@ -143,6 +143,7 @@ setInterval(loadEvents, 86400000);
 
 </body>
 </html>
+
 
 
 
